@@ -78,6 +78,6 @@
         "pre-command-run": "mkdir -p var",
         "psalm": "tools/psalm/vendor/bin/psalm --show-info --no-diff --no-cache",
         "rector": "tools/rector/vendor/bin/rector process",
-        "test": "phpunit --colors"
+        "test": "phpunit"
     }
 }
