@@ -1,12 +1,60 @@
-# Thesis Template
+# Varint and ZigZag encoding implementation
 
-[![PHP Version Requirement](https://img.shields.io/packagist/dependency-v/thesis/template/php)](https://packagist.org/packages/thesis/template)
-[![GitHub Release](https://img.shields.io/github/v/release/thesis-php/template)](https://github.com/thesis-php/template/releases)
-[![Code Coverage](https://codecov.io/gh/thesis-php/template/branch/0.1.x/graph/badge.svg)](https://codecov.io/gh/thesis-php/template/tree/0.1.x)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fthesis-php%2Ftemplate%2F0.1.x)](https://dashboard.stryker-mutator.io/reports/github.com/thesis-php/template/0.1.x)
+Variable-width integers are at the core of the wire format of protobuf, kafka protocol and many other protocols and codecs.
 
 ## Installation
 
 ```shell
-composer require thesis/template
+composer require thesis/varint
+```
+
+## Usage
+
+The library uses `numeric-string` instead of `int` in its API to support the serialization of large numbers and avoid overflow issues.
+A library built on top of `thesis/varint` may choose to offer `int` in its API if it's certain that no overflow issues will occur or handle overflow errors itself.
+This is not the responsibility of *this* library.
+
+You can explicitly choose the **varint** implementation. The library supports serialization based on `bcmath` and `gmp`.
+
+Example using `bcmath`:
+```php
+use Thesis\Varint;
+
+$codec = Varint\BcMath::Codec;
+
+$buffer = $codec->encodeVarint('125');
+echo $codec->decodeVarint($buffer); // '125'
+```
+
+Example using `gmp`:
+```php
+use Thesis\Varint;
+
+$codec = Varint\Gmp::Codec;
+
+$buffer = $codec->encodeVarint('125');
+echo $codec->decodeVarint($buffer); // '125'
+```
+
+Example of automatic **varint** driver selection based on loaded extensions:
+
+```php
+use Thesis\Varint;
+
+$codec = Varint\selectVarintCodec();
+
+$buffer = $codec->encodeVarint('125');
+echo $codec->decodeVarint($buffer);
+```
+
+[Zigzag](https://lemire.me/blog/2022/11/25/making-all-your-integers-positive-with-zigzag-encoding/) encoding is used for serializing negative varint numbers.
+
+```php
+use Thesis\Varint;
+
+$varint = Varint\selectVarintCodec(); // gmp or bcmath
+$zigzag = Varint\selectZigZagCodec(); // gmp or bcmath
+
+$buffer = $varint->encodeVarint($zigzag->encodeZigZag('-125'));
+echo $zigzag->decodeZigZag($varint->decodeVarint($buffer)); // '-125'
 ```

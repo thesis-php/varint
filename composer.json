@@ -1,12 +1,16 @@
 {
-    "name": "thesis/template",
-    "description": "Thesis Template",
+    "name": "thesis/varint",
+    "description": "Varint and ZigZag integer encoding.",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
             "name": "Valentin Udaltsov",
             "email": "udaltsov.valentin@gmail.com"
+        },
+        {
+            "name": "kafkiansky",
+            "email": "vadimzanfir@gmail.com"
         },
         {
             "name": "Thesis Team",
@@ -18,17 +22,25 @@
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.8.2",
-        "phpunit/phpunit": "^12.1.4",
-        "symfony/var-dumper": "^6.4.15 || ^7.2.6"
+        "phpunit/phpunit": "^12.4.4",
+        "symfony/var-dumper": "^6.4.15 || ^7.3.5"
+    },
+    "suggest": {
+        "ext-bcmath": "Needed to varint and zigzag encoding.",
+        "ext-gmp": "Can be used as a faster version of varint and zigzag encoding."
     },
     "autoload": {
         "psr-4": {
-            "Thesis\\Template\\": "src/"
-        }
+            "Thesis\\Varint\\": "src/"
+        },
+        "files": [
+            "src/varint.php",
+            "src/zigzag.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Thesis\\Template\\": "tests/"
+            "Thesis\\Varint\\": "tests/"
         }
     },
     "config": {
@@ -50,6 +62,15 @@
     },
     "scripts": {
         "analyse-deps": "tools/composer-dependency-analyser/vendor/bin/composer-dependency-analyser",
+        "check": [
+            "@composer fixcs -- --dry-run",
+            "@composer rector -- --dry-run",
+            "@phpstan",
+            "@composer validate",
+            "@composer normalize --dry-run",
+            "@analyse-deps",
+            "@test"
+        ],
         "fixcs": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --diff --verbose",
         "infection": "tools/infection/vendor/bin/infection --show-mutations",
         "normalize": "@composer bin composer-normalize normalize --diff ../../composer.json",
@@ -57,6 +78,6 @@
         "pre-command-run": "mkdir -p var",
         "psalm": "tools/psalm/vendor/bin/psalm --show-info --no-diff --no-cache",
         "rector": "tools/rector/vendor/bin/rector process",
-        "test": "phpunit"
+        "test": "phpunit --colors"
     }
 }
