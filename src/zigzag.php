@@ -11,7 +11,7 @@ namespace Thesis\Varint;
  */
 function encodeZigZag(string $value): string
 {
-    return zigZagCodec()->encodeZigZag($value);
+    return selectZigZagCodec()->encodeZigZag($value);
 }
 
 /**
@@ -21,29 +21,17 @@ function encodeZigZag(string $value): string
  */
 function decodeZigZag(string $value): string
 {
-    return zigZagCodec()->decodeZigZag($value);
+    return selectZigZagCodec()->decodeZigZag($value);
 }
 
 /**
  * @api
  */
-function zigZagCodec(?ZigZagCodec $codec = null): ZigZagCodec
+function selectZigZagCodec(?ZigZagCodec $codec = null): ZigZagCodec
 {
     /** @var ?ZigZagCodec $cache */
     static $cache;
-    $cache ??= ($codec ?? selectZigZagCodec());
+    $cache ??= ($codec ?? Brick::Codec);
 
     return $cache;
-}
-
-/**
- * @api
- */
-function selectZigZagCodec(): ZigZagCodec
-{
-    return match (true) {
-        \extension_loaded('gmp') => Gmp::Codec,
-        \extension_loaded('bcmath') => BcMath::Codec,
-        default => throw new \RuntimeException('No supported varint driver: install the bcmath or gmp extension.'),
-    };
 }

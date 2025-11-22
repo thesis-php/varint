@@ -27,8 +27,7 @@
         "symfony/var-dumper": "^6.4.15 || ^7.3.5"
     },
     "suggest": {
-        "ext-bcmath": "Needed to varint and zigzag encoding.",
-        "ext-gmp": "Can be used as a faster version of varint and zigzag encoding."
+        "ext-gmp": "Can be used as a faster extension for varint and zigzag encoding used by brick/math."
     },
     "autoload": {
         "psr-4": {

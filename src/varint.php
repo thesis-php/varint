@@ -11,7 +11,7 @@ namespace Thesis\Varint;
  */
 function encodeVarint(string $value): string
 {
-    return varintCodec()->encodeVarint($value);
+    return selectVarintCodec()->encodeVarint($value);
 }
 
 /**
@@ -22,29 +22,17 @@ function encodeVarint(string $value): string
  */
 function decodeVarint(string $value): string
 {
-    return varintCodec()->decodeVarint($value);
+    return selectVarintCodec()->decodeVarint($value);
 }
 
 /**
  * @api
  */
-function varintCodec(?VarintCodec $codec = null): VarintCodec
+function selectVarintCodec(?VarintCodec $codec = null): VarintCodec
 {
     /** @var ?VarintCodec $cache */
     static $cache;
-    $cache ??= ($codec ?? selectVarintCodec());
+    $cache ??= ($codec ?? Brick::Codec);
 
     return $cache;
-}
-
-/**
- * @api
- */
-function selectVarintCodec(): VarintCodec
-{
-    return match (true) {
-        \extension_loaded('gmp') => Gmp::Codec,
-        \extension_loaded('bcmath') => BcMath::Codec,
-        default => throw new \RuntimeException('No supported varint driver: install the bcmath or gmp extension.'),
-    };
 }
