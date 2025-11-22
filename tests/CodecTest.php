@@ -8,8 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(BcMath::class)]
-#[CoversClass(Gmp::class)]
+#[CoversClass(Brick::class)]
 final class CodecTest extends TestCase
 {
     /**
@@ -24,9 +23,9 @@ final class CodecTest extends TestCase
     #[TestWith(['340282366920938463463374607431768211455'])]
     public function testVarintRoundTrip(string $value): void
     {
-        foreach ([BcMath::Codec, Gmp::Codec] as $codec) {
-            self::assertSame($value, $codec->decodeVarint($codec->encodeVarint($value)));
-        }
+        $codec = Brick::Codec;
+
+        self::assertSame($value, $codec->decodeVarint($codec->encodeVarint($value)));
     }
 
     /**
@@ -54,8 +53,8 @@ final class CodecTest extends TestCase
     #[TestWith(['-170141183460469231731687303715884105728'])]
     public function testZigZagRoundTrip(string $value): void
     {
-        foreach ([BcMath::Codec, Gmp::Codec] as $codec) {
-            self::assertSame($value, $codec->decodeZigZag($codec->decodeVarint($codec->encodeVarint($codec->encodeZigZag($value)))));
-        }
+        $codec = Brick::Codec;
+
+        self::assertSame($value, $codec->decodeZigZag($codec->decodeVarint($codec->encodeVarint($codec->encodeZigZag($value)))));
     }
 }
