@@ -42,8 +42,7 @@ enum Brick implements
             $low7 = $byte & 0x7F;
 
             $num = $num->plus(
-                BigInteger::of($low7)
-                    ->multipliedBy(BigInteger::of(128)->power($offset++)),
+                BigInteger::of($low7)->multipliedBy(BigInteger::of(128)->power($offset++)),
             );
 
             if (($byte & 0x80) === 0) {
