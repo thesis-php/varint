@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Thesis\Varint;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\TestWith;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Brick::class)]
@@ -14,13 +14,7 @@ final class CodecTest extends TestCase
     /**
      * @param numeric-string $value
      */
-    #[TestWith(['1'])]
-    #[TestWith(['128'])]
-    #[TestWith(['16384'])]
-    #[TestWith(['2097152'])]
-    #[TestWith(['268435456'])]
-    #[TestWith(['18446744073709551615'])]
-    #[TestWith(['340282366920938463463374607431768211455'])]
+    #[DataProvider('positiveIntegers')]
     public function testVarintRoundTrip(string $value): void
     {
         $codec = Brick::Codec;
@@ -31,30 +25,46 @@ final class CodecTest extends TestCase
     /**
      * @param numeric-string $value
      */
-    #[TestWith(['1'])]
-    #[TestWith(['128'])]
-    #[TestWith(['16384'])]
-    #[TestWith(['2097152'])]
-    #[TestWith(['268435456'])]
-    #[TestWith(['18446744073709551615'])]
-    #[TestWith(['340282366920938463463374607431768211455'])]
-    #[TestWith(['-1'])]
-    #[TestWith(['-128'])]
-    #[TestWith(['-256'])]
-    #[TestWith(['-512'])]
-    #[TestWith(['-1024'])]
-    #[TestWith(['-2048'])]
-    #[TestWith(['-32768'])]
-    #[TestWith(['-654321'])]
-    #[TestWith(['-987654321'])]
-    #[TestWith(['-9223372036854775808'])]
-    #[TestWith(['-18446744073709551616'])]
-    #[TestWith(['-340282366920938463463374607431768211456'])]
-    #[TestWith(['-170141183460469231731687303715884105728'])]
+    #[DataProvider('positiveIntegers')]
+    #[DataProvider('negativeIntegers')]
     public function testZigZagRoundTrip(string $value): void
     {
         $codec = Brick::Codec;
 
         self::assertSame($value, $codec->decodeZigZag($codec->decodeVarint($codec->encodeVarint($codec->encodeZigZag($value)))));
+    }
+
+    /**
+     * @return iterable<array{numeric-string}>
+     */
+    public static function positiveIntegers(): iterable
+    {
+        yield ['1'];
+        yield ['128'];
+        yield ['16384'];
+        yield ['2097152'];
+        yield ['268435456'];
+        yield ['18446744073709551615'];
+        yield ['340282366920938463463374607431768211455'];
+    }
+
+    /**
+     * @return iterable<array{numeric-string}>
+     */
+    public static function negativeIntegers(): iterable
+    {
+        yield ['-1'];
+        yield ['-128'];
+        yield ['-256'];
+        yield ['-512'];
+        yield ['-1024'];
+        yield ['-2048'];
+        yield ['-32768'];
+        yield ['-654321'];
+        yield ['-987654321'];
+        yield ['-9223372036854775808'];
+        yield ['-18446744073709551616'];
+        yield ['-340282366920938463463374607431768211456'];
+        yield ['-170141183460469231731687303715884105728'];
     }
 }
