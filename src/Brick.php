@@ -34,6 +34,17 @@ enum Brick implements
 
     public function decodeVarint(string $value): string
     {
+        return $this->decodeVarintSized($value)->value;
+    }
+
+    public function size(string $value): int
+    {
+        /** @var positive-int */
+        return (int) ceil(\strlen(BigInteger::of($value)->toBase(2)) / 7);
+    }
+
+    public function decodeVarintSized(string $value): Number
+    {
         $num    = BigInteger::zero();
         $offset = 0;
 
@@ -46,7 +57,7 @@ enum Brick implements
             );
 
             if (($byte & 0x80) === 0) {
-                return (string) $num;
+                return new Number((string) $num, $i + 1);
             }
         }
 
