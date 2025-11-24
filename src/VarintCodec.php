@@ -4,33 +4,32 @@ declare(strict_types=1);
 
 namespace Thesis\Varint;
 
+use BcMath\Number;
+
 /**
  * @api
  */
 interface VarintCodec
 {
     /**
-     * @param numeric-string $value
      * @return non-empty-string
      */
-    public function encodeVarint(string $value): string;
+    public function encodeVarint(Number $num): string;
 
     /**
      * @param non-empty-string $value
-     * @return numeric-string
      * @throws MalformedVarintNumber
      */
-    public function decodeVarint(string $value): string;
+    public function decodeVarint(string $value): Number;
 
     /**
-     * @param numeric-string $value
+     * @param non-empty-string $value
+     * @throws MalformedVarintNumber
+     */
+    public function decodeVarintSized(string $value): Sized;
+
+    /**
      * @return positive-int
      */
-    public function size(string $value): int;
-
-    /**
-     * @param non-empty-string $value
-     * @throws MalformedVarintNumber
-     */
-    public function decodeVarintSized(string $value): Number;
+    public function size(Number $num): int;
 }

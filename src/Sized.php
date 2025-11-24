@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Thesis\Varint;
 
+use BcMath\Number;
+
 /**
  * @api
  */
-final readonly class Number
+final readonly class Sized
 {
     /**
-     * @param numeric-string $value
      * @param positive-int $size
      */
     public function __construct(
-        public string $value,
+        public Number $value,
         public int $size,
     ) {}
 }
