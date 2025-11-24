@@ -67,4 +67,34 @@ final class CodecTest extends TestCase
         yield ['-340282366920938463463374607431768211456'];
         yield ['-170141183460469231731687303715884105728'];
     }
+
+    /**
+     * @param numeric-string $value
+     * @param positive-int $size
+     */
+    #[DataProvider('nonNegativeSizedIntegers')]
+    public function testVarintSized(string $value, int $size): void
+    {
+        $codec = Brick::Codec;
+
+        $number = $codec->decodeVarintSized($codec->encodeVarint($value));
+        self::assertSame($size, $codec->size($value));
+        self::assertSame($value, $number->value);
+        self::assertSame($size, $number->size);
+    }
+
+    /**
+     * @return iterable<array{numeric-string, positive-int}>
+     */
+    public static function nonNegativeSizedIntegers(): iterable
+    {
+        yield ['0', 1];
+        yield ['1', 1];
+        yield ['128', 2];
+        yield ['16384', 3];
+        yield ['2097152', 4];
+        yield ['268435456', 5];
+        yield ['18446744073709551615', 10];
+        yield ['340282366920938463463374607431768211455', 19];
+    }
 }
