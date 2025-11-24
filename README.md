@@ -36,3 +36,26 @@ $codec = Varint\Brick::Codec;
 $buffer = $codec->encodeVarint($codec->encodeZigZag('-125'));
 echo $codec->decodeZigZag($codec->decodeVarint($buffer)); // '-125'
 ```
+
+You can get the size of a varint in bytes before encoding it:
+```php
+use Thesis\Varint;
+
+$codec = Varint\Brick::Codec;
+
+echo $codec->size('128'); // 2
+```
+
+Likewise, you can decode a varint to get both the number and its size in bytes:
+```php
+use Thesis\Varint;
+
+$codec = Varint\Brick::Codec;
+
+$number = $codec->decodeVarintSized($codec->encodeVarint('128'));
+echo $number->value; // '128'
+echo $number->size; // 2
+```
+
+This is useful to use in protocols because you don't know in advance how many bytes to consume from the buffer to read a varint.
+Therefore, you read it first and then consume that many bytes from the buffer based on the size obtained from `$number->size`.
