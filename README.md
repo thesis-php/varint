@@ -17,40 +17,44 @@ This is not the responsibility of *this* library.
 Example of **varint** encoding using `BcMath` implementation:
 ```php
 use Thesis\Varint;
+use BcMath\Number;
 
 $codec = Varint\BcMath::Codec;
 
-$buffer = $codec->encodeVarint('125');
-echo $codec->decodeVarint($buffer); // '125'
+$buffer = $codec->encodeVarint(new Number('125'));
+echo $codec->decodeVarint($buffer)->value; // '125'
 ```
 
 [Zigzag](https://lemire.me/blog/2022/11/25/making-all-your-integers-positive-with-zigzag-encoding/) encoding is used for serializing negative varint numbers.
 
 ```php
 use Thesis\Varint;
+use BcMath\Number;
 
 $codec = Varint\BcMath::Codec;
 
-$buffer = $codec->encodeVarint($codec->encodeZigZag('-125'));
-echo $codec->decodeZigZag($codec->decodeVarint($buffer)); // '-125'
+$buffer = $codec->encodeVarint($codec->encodeZigZag(new Number('-125')));
+echo $codec->decodeZigZag($codec->decodeVarint($buffer))->value; // '-125'
 ```
 
 You can get the size of a varint in bytes before encoding it:
 ```php
 use Thesis\Varint;
+use BcMath\Number;
 
 $codec = Varint\BcMath::Codec;
 
-echo $codec->size('128'); // 2
+echo $codec->size(new Number('128')); // 2
 ```
 
 Likewise, you can decode a varint to get both the number and its size in bytes:
 ```php
 use Thesis\Varint;
+use BcMath\Number;
 
 $codec = Varint\BcMath::Codec;
 
-$sized = $codec->decodeVarintSized($codec->encodeVarint('128'));
+$sized = $codec->decodeVarintSized($codec->encodeVarint(new Number('128')));
 echo $sized->value; // '128'
 echo $sized->size; // 2
 ```
