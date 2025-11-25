@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace Thesis\Varint;
 
+use BcMath\Number;
+
 /**
  * @api
  */
 interface ZigZagCodec
 {
-    /**
-     * @param numeric-string $value
-     * @return numeric-string
-     */
-    public function encodeZigZag(string $value): string;
+    public function encodeZigZag(Number $num): Number;
 
-    /**
-     * @param numeric-string $value
-     * @return numeric-string
-     */
-    public function decodeZigZag(string $value): string;
+    public function decodeZigZag(Number $num): Number;
 }
